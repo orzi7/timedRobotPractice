@@ -33,13 +33,13 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     joyStick = new Joystick(0);
-    motor = new TalonSRX(1);
+    motor = new TalonSRX(3);
   }
 
   /**
    * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
    * that you want ran during disabled, autonomous, teleoperated and test.
-   *
+   *W
    * <p>This runs after the mode specific periodic functions, but before LiveWindow and
    * SmartDashboard integrated updating.
    */
@@ -75,22 +75,27 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     if (joyStick.getRawButton(1)) {
-      motor.set(ControlMode.PercentOutput, buttonPower);
+      motor.set(ControlMode.PercentOutput, 0.3);
     }
 
-    if (joyStick.getRawButton(2)) {
-      motor.set(ControlMode.PercentOutput, -buttonPower);
+    else if (joyStick.getRawButton(2)) {
+      motor.set(ControlMode.PercentOutput, -0.3);
     }
 
-    if (joyStick.getRawAxis(1) > 0.05) {
+    else if (joyStick.getRawAxis(1) > 0.05) {
       axisPower = joyStick.getRawAxis(1);
       motor.set(ControlMode.PercentOutput, axisPower);
+    }
+
+    else {
+      motor.set(ControlMode.PercentOutput, 0);
     }
   }
 
   /** This function is called once when the robot is disabled. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+  }
 
   /** This function is called periodically when disabled. */
   @Override
