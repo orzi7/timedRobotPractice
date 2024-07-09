@@ -5,8 +5,6 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 public class Robot extends TimedRobot {
@@ -26,13 +24,17 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     joystick = new Joystick(0);
 
-    firstMotorRight = new TalonSRX(1);
-    secondMotorRight = new TalonSRX(2);
+    firstMotorRight = new TalonSRX(3);
+    secondMotorRight = new TalonSRX(4);
+
+    secondMotorRight.setInverted(true);    
+    firstMotorRight.setInverted(true);
+
 
     firstMotorRight.follow(secondMotorRight);
 
-    firstMotorLeft = new TalonSRX(3);
-    secondMotorLeft = new TalonSRX(4);
+    firstMotorLeft = new TalonSRX(1);
+    secondMotorLeft = new TalonSRX(2);
 
     firstMotorLeft.follow(secondMotorLeft);
   }
@@ -57,15 +59,13 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    if (joystick.getRawAxis(3) > 0.05) {
-      rightSidePower = joystick.getRawAxis(1);
-      secondMotorRight.set(ControlMode.PercentOutput, rightSidePower);
-    }
 
-    if (joystick.getRawAxis(4) > 0.05) {
-      leftSidePower = joystick.getRawAxis(2);
-      secondMotorLeft.set(ControlMode.PercentOutput, -leftSidePower);
-    }
+    
+    rightSidePower = joystick.getRawAxis(3);
+    secondMotorRight.set(ControlMode.PercentOutput, rightSidePower);
+    leftSidePower = joystick.getRawAxis(1);
+    secondMotorLeft.set(ControlMode.PercentOutput, leftSidePower);
+
   }
 
   @Override
