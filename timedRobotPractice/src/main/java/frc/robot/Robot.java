@@ -4,6 +4,10 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -16,6 +20,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Robot extends TimedRobot {
 
+  private Joystick joyStick;
+  private TalonSRX motor;
+  private double buttonPower;
+  private double axisPower;
+
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -23,7 +32,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    
+    joyStick = new Joystick(0);
+    motor = new TalonSRX(1);
   }
 
   /**
@@ -48,32 +58,35 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    m_autoSelected = m_chooser.getSelected();
-    // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
-    System.out.println("Auto selected: " + m_autoSelected);
   }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    switch (m_autoSelected) {
-      case kCustomAuto:
-        // Put custom auto code here
-        break;
-      case kDefaultAuto:
-      default:
-        // Put default auto code here
-        break;
-    }
   }
 
   /** This function is called once when teleop is enabled. */
   @Override
-  public void teleopInit() {}
+  public void teleopInit() {
+    buttonPower = 0.3;
+  }
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    if (joyStick.getRawButton(1)) {
+      motor.set(ControlMode.PercentOutput, buttonPower);
+    }
+
+    if (joyStick.getRawButton(2)) {
+      motor.set(ControlMode.PercentOutput, -buttonPower);
+    }
+
+    if (joyStick.getRawAxis(1) > 0.05) {
+      axisPower = joyStick.getRawAxis(1);
+      motor.set(ControlMode.PercentOutput, axisPower);
+    }
+  }
 
   /** This function is called once when the robot is disabled. */
   @Override
