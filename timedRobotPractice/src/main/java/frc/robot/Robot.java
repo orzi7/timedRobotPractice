@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * project.
  */
 public class Robot extends TimedRobot {
+<<<<<<< HEAD
   private double leftSidePower;
   private double rightSidePower;
 
@@ -30,6 +31,12 @@ public class Robot extends TimedRobot {
   private TalonSRX firstMotorLeft;
   private TalonSRX secondMotorLeft;
 
+=======
+  private static final String kDefaultAuto = "Default";
+  private static final String kCustomAuto = "My Auto";
+  private String m_autoSelected;
+  private final SendableChooser<String> m_chooser = new SendableChooser<>();
+>>>>>>> b01e5b5a44805d5a1d3b5a1e3e9c6e09cc750b58
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -37,6 +44,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+<<<<<<< HEAD
     joystick = new Joystick(0);
 
     firstMotorRight = new TalonSRX(1);
@@ -49,6 +57,11 @@ public class Robot extends TimedRobot {
 
     firstMotorLeft.follow(secondMotorLeft);
 
+=======
+    m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
+    m_chooser.addOption("My Auto", kCustomAuto);
+    SmartDashboard.putData("Auto choices", m_chooser);
+>>>>>>> b01e5b5a44805d5a1d3b5a1e3e9c6e09cc750b58
   }
 
   /**
@@ -73,13 +86,23 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    
+    m_autoSelected = m_chooser.getSelected();
+    // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
+    System.out.println("Auto selected: " + m_autoSelected);
   }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    
+    switch (m_autoSelected) {
+      case kCustomAuto:
+        // Put custom auto code here
+        break;
+      case kDefaultAuto:
+      default:
+        // Put default auto code here
+        break;
+    }
   }
 
   /** This function is called once when teleop is enabled. */
