@@ -4,9 +4,6 @@
 
 package frc.robot;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -20,12 +17,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Robot extends TimedRobot {
 
-  private Joystick driverJoyStick;  
+  private Joystick driverJoyStick;
   private TalonSRX motor;
-  private double powerForMotor;  
-  private double joystickPowerForMotor;
-
-
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -69,24 +62,13 @@ public class Robot extends TimedRobot {
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
-    powerForMotor = 0.3;
+    double powerForMotor = 0.3;
   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    if (driverJoyStick.getRawButton(1)) {
-      motor.set(ControlMode.PercentOutput, powerForMotor);
-    }
-
-    if (driverJoyStick.getRawButton(2)) {
-      motor.set(ControlMode.PercentOutput, -powerForMotor);
-    }
-
-    if (driverJoyStick.getRawAxis(1) > 0.05) {
-      joystickPowerForMotor = driverJoyStick.getRawAxis(1);
-      motor.set(ControlMode.PercentOutput, joystickPowerForMotor);
-    }
+    if (driverJoyStick.)
   }
 
   /** This function is called once when the robot is disabled. */
