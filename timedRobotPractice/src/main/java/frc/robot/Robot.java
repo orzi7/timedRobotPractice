@@ -17,17 +17,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Robot extends TimedRobot {
 
-  private Joystick driverJoyStick;
-  private TalonSRX motor;
-
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
   @Override
   public void robotInit() {
-    driverJoyStick = new Joystick(0);
-    motor = new TalonSRX(1);
+    Joystick driverJoyStick = new Joystick(0);
+    TalonSRX motor = new TalonSRX(1);
   }
 
   /**
