@@ -4,6 +4,10 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -15,8 +19,17 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * project.
  */
 public class Robot extends TimedRobot {
-  private double leftSidePowe;
-  
+  private double leftSidePower;
+  private double rightSidePower;
+
+  private Joystick joystick;
+
+  private TalonSRX firstMotorRight;
+  private TalonSRX secondMotorRight;
+
+  private TalonSRX firstMotorLeft;
+  private TalonSRX secondMotorLeft;
+
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -24,7 +37,18 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    
+    joystick = new Joystick(0);
+
+    firstMotorRight = new TalonSRX(1);
+    secondMotorRight = new TalonSRX(2);
+
+    firstMotorRight.follow(secondMotorRight);
+
+    firstMotorLeft = new TalonSRX(3);
+    secondMotorLeft = new TalonSRX(4);
+
+    firstMotorLeft.follow(secondMotorLeft);
+
   }
 
   /**
@@ -64,7 +88,17 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    if (joystick.getRawAxis(1) > 0.05) {
+      rightSidePower = joystick.getRawAxis(1);
+      secondMotorRight.set(ControlMode.PercentOutput, rightSidePower);
+    }
+
+    if (joystick.getRawAxis(2) > 0.05) {
+      leftSidePower = joystick.getRawAxis(2);
+      secondMotorLeft.set(ControlMode.PercentOutput, -leftSidePower);
+    }
+  }
 
   /** This function is called once when the robot is disabled. */
   @Override
