@@ -4,7 +4,13 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -15,22 +21,28 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * project.
  */
 public class Robot extends TimedRobot {
-  private static final String kDefaultAuto = "Default";
-  private static final String kCustomAuto = "My Auto";
-  private String m_autoSelected;
-  private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
+  private TalonSRX motor;
+
+
+  private ShuffleboardTab PIDTab = Shuffleboard.getTab("PID Command");
+  private ShuffleboardTab speedTab = Shuffleboard.getTab("Speed");
+  private GenericEntry kP = PIDTab.add("P", 0).getEntry();
+  private GenericEntry kI = PIDTab.add("I", 0).getEntry();
+  private GenericEntry kD = PIDTab.add("D", 0).getEntry();
+  private GenericEntry setPoint = PIDTab.add("Setpoint", 0).getEntry();
+  
+  
+  
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
   @Override
   public void robotInit() {
-    m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
-    m_chooser.addOption("My Auto", kCustomAuto);
-    SmartDashboard.putData("Auto choices", m_chooser);
+    motor = new TalonSRX(1);
   }
-
+  
   /**
    * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
    * that you want ran during disabled, autonomous, teleoperated and test.
@@ -39,8 +51,10 @@ public class Robot extends TimedRobot {
    * SmartDashboard integrated updating.
    */
   @Override
-  public void robotPeriodic() {}
-
+  public void robotPeriodic() {
+    
+  }
+  
   /**
    * This autonomous (along with the chooser code above) shows how to select between different
    * autonomous modes using the dashboard. The sendable chooser code works with the Java
@@ -53,32 +67,34 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    m_autoSelected = m_chooser.getSelected();
-    // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
-    System.out.println("Auto selected: " + m_autoSelected);
+    
   }
-
+  
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    switch (m_autoSelected) {
-      case kCustomAuto:
-        // Put custom auto code here
-        break;
-      case kDefaultAuto:
-      default:
-        // Put default auto code here
-        break;
-    }
+    
   }
-
+  
   /** This function is called once when teleop is enabled. */
   @Override
-  public void teleopInit() {}
+  public void teleopInit() {
+  }
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    double kPMotor = kP.getDouble(0.0);
+    double kIMotor = kI.getDouble(0.0);
+    double kDMotor = kD.getDouble(0.0);
+    motor.config_kP(0, kPMotor);
+    motor.config_kI(0, kIMotor);
+    motor.config_kD(0, kDMotor);
+    double setPointMotor = setPoint.getDouble(0.0);
+    motor.set(ControlMode.Velocity, setPointMotor);
+
+    speedTab.add("Speed", motor.getMotorOutputVoltage());
+  }
 
   /** This function is called once when the robot is disabled. */
   @Override
