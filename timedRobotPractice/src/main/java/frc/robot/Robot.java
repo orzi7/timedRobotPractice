@@ -4,7 +4,14 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -15,10 +22,19 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * project.
  */
 public class Robot extends TimedRobot {
-  private static final String kDefaultAuto = "Default";
-  private static final String kCustomAuto = "My Auto";
-  private String m_autoSelected;
-  private final SendableChooser<String> m_chooser = new SendableChooser<>();
+
+  private TalonSRX firstMotorRight;
+  private TalonSRX secondMotorRight;
+
+  private TalonSRX firstMotorLeft;
+  private TalonSRX secondMotorLeft;
+
+  private DigitalInput beamBreak;
+
+  private boolean beamBreakPosition;
+
+  private ShuffleboardTab tab = Shuffleboard.getTab("Beam Break Position");
+
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -26,9 +42,23 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
-    m_chooser.addOption("My Auto", kCustomAuto);
-    SmartDashboard.putData("Auto choices", m_chooser);
+
+    firstMotorRight = new TalonSRX(3);
+    secondMotorRight = new TalonSRX(4);
+
+    secondMotorRight.setInverted(true);    
+    firstMotorRight.setInverted(true);
+
+
+    firstMotorRight.follow(secondMotorRight);
+
+    firstMotorLeft = new TalonSRX(1);
+    secondMotorLeft = new TalonSRX(2);
+
+    firstMotorLeft.follow(secondMotorLeft);
+
+    beamBreak = new DigitalInput(1);
+
   }
 
   /**
@@ -53,23 +83,13 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    m_autoSelected = m_chooser.getSelected();
-    // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
-    System.out.println("Auto selected: " + m_autoSelected);
+
   }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    switch (m_autoSelected) {
-      case kCustomAuto:
-        // Put custom auto code here
-        break;
-      case kDefaultAuto:
-      default:
-        // Put default auto code here
-        break;
-    }
+
   }
 
   /** This function is called once when teleop is enabled. */
@@ -78,7 +98,19 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    beamBreakPosition = beamBreak.get();
+    if (beamBreakPosition) {
+      secondMotorLeft.set(ControlMode.PercentOutput, 0.5);
+      secondMotorRight.set(ControlMode.PercentOutput, 0.5);
+    }
+    else {
+      secondMotorLeft.set(ControlMode.PercentOutput, 0);
+      secondMotorRight.set(ControlMode.PercentOutput, 0);
+    }
+
+    tab.add("Beam Break Position", beamBreakPosition);
+  }
 
   /** This function is called once when the robot is disabled. */
   @Override
