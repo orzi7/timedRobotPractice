@@ -101,12 +101,12 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     beamBreakPosition = beamBreak.get();
     if (beamBreakPosition) {
-      secondMotorLeft.set(ControlMode.PercentOutput, 0.5);
-      secondMotorRight.set(ControlMode.PercentOutput, 0.5);
-    }
-    else {
       secondMotorLeft.set(ControlMode.PercentOutput, 0);
       secondMotorRight.set(ControlMode.PercentOutput, 0);
+    }
+    else {
+      secondMotorLeft.set(ControlMode.PercentOutput, 0.5);
+      secondMotorRight.set(ControlMode.PercentOutput, 0.5);
     }
 
     tab.add("Beam Break Position", beamBreakPosition);
