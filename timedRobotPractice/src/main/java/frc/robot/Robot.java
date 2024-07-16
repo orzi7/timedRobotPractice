@@ -33,8 +33,6 @@ public class Robot extends TimedRobot {
 
   private boolean beamBreakPosition;
 
-  private ShuffleboardTab tab = Shuffleboard.getTab("Beam Break Position");
-
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -109,7 +107,7 @@ public class Robot extends TimedRobot {
       secondMotorRight.set(ControlMode.PercentOutput, 0.5);
     }
 
-    tab.add("Beam Break Position", beamBreakPosition);
+    SmartDashboard.putBoolean("Beam Break Position", beamBreakPosition);
   }
 
   /** This function is called once when the robot is disabled. */
