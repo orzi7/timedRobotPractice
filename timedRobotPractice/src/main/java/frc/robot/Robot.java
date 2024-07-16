@@ -35,9 +35,6 @@ public class Robot extends TimedRobot {
   private boolean leftBeamBreakPosition;
   private boolean rightBeamBreakPosition;
 
-  private ShuffleboardTab rightBeamBreakTab = Shuffleboard.getTab("right Beam Break position");
-  private ShuffleboardTab leftBeamBreakTab = Shuffleboard.getTab("left Beam Break position");
-
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -60,7 +57,7 @@ public class Robot extends TimedRobot {
 
     firstMotorLeft.follow(secondMotorLeft);
 
-    rightBeamBreak = new DigitalInput(0);
+    rightBeamBreak = new DigitalInput(2);
     leftBeamBreak = new DigitalInput(1);
 
   }
@@ -120,8 +117,8 @@ public class Robot extends TimedRobot {
       secondMotorLeft.set(ControlMode.PercentOutput, 0.5);
     }
 
-    rightBeamBreakTab.add("right Beam Break position", rightBeamBreakPosition);
-    leftBeamBreakTab.add("left Beam Break position", leftBeamBreakPosition);
+    SmartDashboard.putBoolean("right Beam Break position", rightBeamBreakPosition);
+    SmartDashboard.putBoolean("left Beam Break position", leftBeamBreakPosition);
   }
 
   /** This function is called once when the robot is disabled. */
