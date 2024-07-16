@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.networktables.GenericEntry;
@@ -24,14 +25,12 @@ public class Robot extends TimedRobot {
 
   private TalonSRX motor;
 
-
   private ShuffleboardTab PIDTab = Shuffleboard.getTab("PID Command");
-  private ShuffleboardTab speedTab = Shuffleboard.getTab("Speed");
   private GenericEntry kP = PIDTab.add("P", 0).getEntry();
   private GenericEntry kI = PIDTab.add("I", 0).getEntry();
   private GenericEntry kD = PIDTab.add("D", 0).getEntry();
   private GenericEntry setPoint = PIDTab.add("Setpoint", 0).getEntry();
-  
+
   
   
   /**
@@ -41,6 +40,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     motor = new TalonSRX(1);
+    motor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
   }
   
   /**
@@ -84,16 +84,17 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    double kPMotor = kP.getDouble(0.0);
-    double kIMotor = kI.getDouble(0.0);
-    double kDMotor = kD.getDouble(0.0);
+    double kPMotor = kP.getDouble(0);
+    double kIMotor = kI.getDouble(0);
+    double kDMotor = kD.getDouble(0);
     motor.config_kP(0, kPMotor);
     motor.config_kI(0, kIMotor);
     motor.config_kD(0, kDMotor);
-    double setPointMotor = setPoint.getDouble(0.0);
+    double setPointMotor = setPoint.getDouble(0);
     motor.set(ControlMode.Velocity, setPointMotor);
 
-    speedTab.add("Speed", motor.getMotorOutputVoltage());
+    SmartDashboard.putNumber("Speed", motor.getSelectedSensorVelocity());
+    //System.out.println(motor.getMotorOutputVoltage());
   }
 
   /** This function is called once when the robot is disabled. */
