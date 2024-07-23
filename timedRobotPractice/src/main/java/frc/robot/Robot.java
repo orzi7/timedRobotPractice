@@ -15,6 +15,8 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import frc.robot.GlobalConstants.*;
+
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -24,21 +26,21 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends TimedRobot {
 
   private TalonSRX motor;
-  
-  
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
   @Override
   public void robotInit() {
-    SmartDashboard.putNumber("kP", 0);
-    SmartDashboard.putNumber("kI", 0);
-    SmartDashboard.putNumber("kD", 0);
-    SmartDashboard.putNumber("Set Point", 0);
+    SmartDashboard.putNumber("kP", PIDConstants.kP);
+    SmartDashboard.putNumber("kI", PIDConstants.kI);
+    SmartDashboard.putNumber("kD", PIDConstants.kD);
 
-    motor = new TalonSRX(2);
-    //motor.setInverted(true);
+    SmartDashboard.putNumber("Set Point", PIDConstants.setPoint);
+
+    motor = new TalonSRX(MotorConstants.motorId);
+
     motor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
     motor.setSensorPhase(true);
   }
@@ -84,15 +86,15 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    double kPMotor = SmartDashboard.getNumber("kP", 0);
-    double kIMotor = SmartDashboard.getNumber("kI", 0);
-    double kDMotor = SmartDashboard.getNumber("kD", 0);
+    double kPMotor = SmartDashboard.getNumber("kP", PIDConstants.kP);
+    double kIMotor = SmartDashboard.getNumber("kI", PIDConstants.kI);
+    double kDMotor = SmartDashboard.getNumber("kD", PIDConstants.kD);
 
     motor.config_kP(0, kPMotor);
     motor.config_kI(0, kIMotor); 
     motor.config_kD(0, kDMotor);
 
-    double setPointMotor = SmartDashboard.getNumber("Set Point", 0);
+    double setPointMotor = SmartDashboard.getNumber("Set Point", PIDConstants.setPoint);
     motor.set(ControlMode.Position, setPointMotor);
 
     SmartDashboard.putNumber("Position", motor.getSelectedSensorPosition());
