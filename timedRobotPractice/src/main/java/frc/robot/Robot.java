@@ -24,13 +24,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends TimedRobot {
 
   private TalonSRX motor;
-
-  private ShuffleboardTab PIDTab = Shuffleboard.getTab("PID Command");
-  private GenericEntry kP = PIDTab.add("P", 0).getEntry();
-  private GenericEntry kI = PIDTab.add("I", 0).getEntry();
-  private GenericEntry kD = PIDTab.add("D", 0).getEntry();
-  private GenericEntry setPoint = PIDTab.add("Setpoint", 0).getEntry();
-
   
   
   /**
@@ -39,8 +32,15 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    motor = new TalonSRX(1);
-    motor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
+    SmartDashboard.putNumber("kP", 0);
+    SmartDashboard.putNumber("kI", 0);
+    SmartDashboard.putNumber("kD", 0);
+    SmartDashboard.putNumber("Set Point", 0);
+
+    motor = new TalonSRX(2);
+    //motor.setInverted(true);
+    motor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
+    motor.setSensorPhase(true);
   }
   
   /**
@@ -84,17 +84,19 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    double kPMotor = kP.getDouble(0);
-    double kIMotor = kI.getDouble(0);
-    double kDMotor = kD.getDouble(0);
-    motor.config_kP(0, kPMotor);
-    motor.config_kI(0, kIMotor);
-    motor.config_kD(0, kDMotor);
-    double setPointMotor = setPoint.getDouble(0);
-    motor.set(ControlMode.Velocity, setPointMotor);
+    double kPMotor = SmartDashboard.getNumber("kP", 0);
+    double kIMotor = SmartDashboard.getNumber("kI", 0);
+    double kDMotor = SmartDashboard.getNumber("kD", 0);
 
+    motor.config_kP(0, kPMotor);
+    motor.config_kI(0, kIMotor); 
+    motor.config_kD(0, kDMotor);
+
+    double setPointMotor = SmartDashboard.getNumber("Set Point", 0);
+    motor.set(ControlMode.Position, setPointMotor);
+
+    SmartDashboard.putNumber("Position", motor.getSelectedSensorPosition());
     SmartDashboard.putNumber("Speed", motor.getSelectedSensorVelocity());
-    //System.out.println(motor.getMotorOutputVoltage());
   }
 
   /** This function is called once when the robot is disabled. */
