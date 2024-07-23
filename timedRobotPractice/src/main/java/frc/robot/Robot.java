@@ -33,8 +33,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    driverJoystick = new Joystick(JoystickConsistants.driverJoystickPort);
-    motor = new TalonSRX(MotorConsistants.motorId);
+    driverJoystick = new Joystick(JoystickConstants.driverJoystickPort);
+    motor = new TalonSRX(MotorConstants.motorId);
 
     motor.setNeutralMode(NeutralMode.Brake);
   }
@@ -76,14 +76,14 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    if (driverJoystick.getRawButton(JoystickConsistants.XButton)) {
-      motor.set(ControlMode.PercentOutput, MotorConsistants.motorPower);
+    if (driverJoystick.getRawButton(JoystickConstants.XButton)) {
+      motor.set(ControlMode.PercentOutput, MotorConstants.motorPower);
     }
-    else if (driverJoystick.getRawButton(JoystickConsistants.OButton)) {
-      motor.set(ControlMode.PercentOutput, -MotorConsistants.motorPower);
+    else if (driverJoystick.getRawButton(JoystickConstants.OButton)) {
+      motor.set(ControlMode.PercentOutput, -MotorConstants.motorPower);
     }
-    else if (driverJoystick.getRawAxis(JoystickConsistants.YAxis) > 0.05) {
-      axisPower = driverJoystick.getRawAxis(JoystickConsistants.YAxis);
+    else if (driverJoystick.getRawAxis(JoystickConstants.YAxis) > 0.05) {
+      axisPower = driverJoystick.getRawAxis(JoystickConstants.YAxis);
       motor.set(ControlMode.PercentOutput, axisPower);
     }
     else {
