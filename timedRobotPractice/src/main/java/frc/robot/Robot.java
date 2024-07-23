@@ -5,12 +5,15 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import frc.robot.GlobalConstants.*;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -20,11 +23,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Robot extends TimedRobot {
 
-  private Joystick joyStick;
+  private Joystick driverJoystick;
   private TalonSRX motor;
-  private double buttonPower;
   private double axisPower;
-
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -32,8 +33,10 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    joyStick = new Joystick(0);
-    motor = new TalonSRX(3);
+    driverJoystick = new Joystick(JoystickConsistants.driverJoystickPort);
+    motor = new TalonSRX(MotorConsistants.motorId);
+
+    motor.setNeutralMode(NeutralMode.Brake);
   }
 
   /**
@@ -68,25 +71,21 @@ public class Robot extends TimedRobot {
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
-    buttonPower = 0.3;
   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    if (joyStick.getRawButton(1)) {
-      motor.set(ControlMode.PercentOutput, 0.3);
+    if (driverJoystick.getRawButton(JoystickConsistants.XButton)) {
+      motor.set(ControlMode.PercentOutput, MotorConsistants.motorPower);
     }
-
-    else if (joyStick.getRawButton(2)) {
-      motor.set(ControlMode.PercentOutput, -0.3);
+    else if (driverJoystick.getRawButton(JoystickConsistants.OButton)) {
+      motor.set(ControlMode.PercentOutput, -MotorConsistants.motorPower);
     }
-
-    else if (joyStick.getRawAxis(1) > 0.05) {
-      axisPower = joyStick.getRawAxis(1);
+    else if (driverJoystick.getRawAxis(JoystickConsistants.YAxis) > 0.05) {
+      axisPower = driverJoystick.getRawAxis(JoystickConsistants.YAxis);
       motor.set(ControlMode.PercentOutput, axisPower);
     }
-
     else {
       motor.set(ControlMode.PercentOutput, 0);
     }
