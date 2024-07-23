@@ -6,6 +6,7 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.networktables.GenericEntry;
@@ -40,6 +41,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Set Point", PIDConstants.setPoint);
 
     motor = new TalonSRX(MotorConstants.motorId);
+
+    motor.setNeutralMode(NeutralMode.Brake);
 
     motor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
     motor.setSensorPhase(true);
