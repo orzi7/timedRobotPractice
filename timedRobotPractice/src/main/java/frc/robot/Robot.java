@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -14,6 +15,8 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import frc.robot.GlobalConstants.*;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -42,24 +45,28 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    firstMotorRight = new TalonSRX(MotorConstants.firstMotorRightPort);
+    secondMotorRight = new TalonSRX(MotorConstants.secondMotorRightPort);
 
-    firstMotorRight = new TalonSRX(3);
-    secondMotorRight = new TalonSRX(4);
-
-    secondMotorRight.setInverted(true);    
     firstMotorRight.setInverted(true);
-
-
+    secondMotorRight.setInverted(true);
+    
     firstMotorRight.follow(secondMotorRight);
 
-    firstMotorLeft = new TalonSRX(1);
-    secondMotorLeft = new TalonSRX(2);
+    firstMotorRight.setNeutralMode(NeutralMode.Brake);
+    secondMotorRight.setNeutralMode(NeutralMode.Brake);
+
+
+    firstMotorLeft = new TalonSRX(MotorConstants.firstMotorLeftPort);
+    secondMotorLeft = new TalonSRX(MotorConstants.secondMotorLeftPort);
 
     firstMotorLeft.follow(secondMotorLeft);
 
-    rightBeamBreak = new DigitalInput(2);
-    leftBeamBreak = new DigitalInput(1);
+    firstMotorLeft.setNeutralMode(NeutralMode.Brake);
+    secondMotorLeft.setNeutralMode(NeutralMode.Brake);
 
+    rightBeamBreak = new DigitalInput(BeamBreakConstants.rightBeamBreakChannel);
+    leftBeamBreak = new DigitalInput(BeamBreakConstants.leftBeamBreakChannel);
   }
 
   /**
@@ -107,16 +114,15 @@ public class Robot extends TimedRobot {
       secondMotorRight.set(ControlMode.PercentOutput, 0);
     }
     else {
-      secondMotorRight.set(ControlMode.PercentOutput, 0.5);
+      secondMotorRight.set(ControlMode.PercentOutput, MotorConstants.motorPower);
     }
 
     if (leftBeamBreakPosition) {
       secondMotorLeft.set(ControlMode.PercentOutput, 0);
     }
     else {
-      secondMotorLeft.set(ControlMode.PercentOutput, 0.5);
+      secondMotorLeft.set(ControlMode.PercentOutput, MotorConstants.motorPower);
     }
-
     SmartDashboard.putBoolean("right Beam Break position", rightBeamBreakPosition);
     SmartDashboard.putBoolean("left Beam Break position", leftBeamBreakPosition);
   }
