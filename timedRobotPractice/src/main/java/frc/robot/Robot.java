@@ -4,9 +4,18 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import frc.robot.GlobalConstants.*;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -15,10 +24,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * project.
  */
 public class Robot extends TimedRobot {
-  private static final String kDefaultAuto = "Default";
-  private static final String kCustomAuto = "My Auto";
-  private String m_autoSelected;
-  private final SendableChooser<String> m_chooser = new SendableChooser<>();
+
+  private TalonSRX motor;
+  private TrapezoidProfile profile;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -26,9 +34,25 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
-    m_chooser.addOption("My Auto", kCustomAuto);
-    SmartDashboard.putData("Auto choices", m_chooser);
+    SmartDashboard.putNumber("Max Velocity", MotionProfileConstants.maxVelocity);
+    SmartDashboard.putNumber("acceleration", MotionProfileConstants.acceleration);
+
+    SmartDashboard.putNumber("kP", MotionProfileConstants.kP);
+    SmartDashboard.putNumber("kI", MotionProfileConstants.kI);
+    SmartDashboard.putNumber("kD", MotionProfileConstants.kD);
+
+    SmartDashboard.putNumber("Set Point", MotionProfileConstants.setPoint);
+
+    motor = new TalonSRX(MotorConstants.motorId);
+
+    motor.setNeutralMode(NeutralMode.Brake);
+
+    motor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
+    motor.setSensorPhase(true);
+
+    // new TrapezoidProfile.Constraints(10, 20);
+    // new TrapezoidProfile.State(5, 0);
+    // profile.calculate(5, new TrapezoidProfile.State(0, 0), new TrapezoidProfile.State(5, 0));
   }
 
   /**
@@ -53,23 +77,11 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    m_autoSelected = m_chooser.getSelected();
-    // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
-    System.out.println("Auto selected: " + m_autoSelected);
   }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    switch (m_autoSelected) {
-      case kCustomAuto:
-        // Put custom auto code here
-        break;
-      case kDefaultAuto:
-      default:
-        // Put default auto code here
-        break;
-    }
   }
 
   /** This function is called once when teleop is enabled. */
@@ -78,7 +90,27 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    double maxVelocity = SmartDashboard.getNumber("Max Velocity", MotionProfileConstants.maxVelocity);
+    double acceleration = SmartDashboard.getNumber("acceleration", MotionProfileConstants.acceleration);
+    double kPMotor = SmartDashboard.getNumber("kP", MotionProfileConstants.kP);
+    double kIMotor = SmartDashboard.getNumber("kI", MotionProfileConstants.kI);
+    double kDMotor = SmartDashboard.getNumber("kD", MotionProfileConstants.kD);
+
+
+    motor.config_kP(0, kPMotor);
+    motor.config_kI(0, kIMotor); 
+    motor.config_kD(0, kDMotor);
+
+    profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(maxVelocity, acceleration));
+
+    double setPointMotor = SmartDashboard.getNumber("Set Point", MotionProfileConstants.setPoint);
+    // motor.set(ControlMode.Position, setPointMotor);
+
+    SmartDashboard.putNumber("Position", motor.getSelectedSensorPosition());
+    SmartDashboard.putNumber("Speed", motor.getSelectedSensorVelocity());
+    SmartDashboard.putBoolean("Motion Profile state", motor.isMotionProfileFinished());
+  }
 
   /** This function is called once when the robot is disabled. */
   @Override
