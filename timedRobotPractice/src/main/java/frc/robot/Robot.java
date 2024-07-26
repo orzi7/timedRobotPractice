@@ -82,7 +82,7 @@ public class Robot extends TimedRobot {
     else if (driverJoystick.getRawButton(JoystickConstants.OButton)) {
       motor.set(ControlMode.PercentOutput, -MotorConstants.motorPower);
     }
-    else if (driverJoystick.getRawAxis(JoystickConstants.YAxis) > 0.05) {
+    else if (Math.abs(driverJoystick.getRawAxis(JoystickConstants.YAxis)) > 0.05) {
       axisPower = driverJoystick.getRawAxis(JoystickConstants.YAxis);
       motor.set(ControlMode.PercentOutput, axisPower);
     }
